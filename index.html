@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Form</title>
+
+    <style>
+        body{
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: linear-gradient(to right, lightblue, lightgreen);
+        }
+
+        h2{
+            color: darkblue;
+        }
+
+        table{
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: white;
+            box-shadow: 0px 0px 10px gray;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        td,th{
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th{
+            background-color: #2196F3;
+            color: white;
+        }
+
+        tr:nth-child(even){
+            background-color: #f2f2f2;
+        }
+
+        input,select{
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        input:focus,
+        select:focus{
+            outline: none;
+            border: 2px solid green;
+        }
+
+        button{
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            background-color: green;
+            cursor: pointer;
+        }
+
+        button:hover{
+            background-color: darkgreen;
+        }
+
+        .delete-btn{
+            background-color: red;
+        }
+
+        .delete-btn:hover{
+            background-color: darkred;
+        }
+
+        #passwordError{
+            color: red;
+            font-size: 12px;
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>STUDENT FORM</h2>
+    <p id="formError" style="color:red;font-weight:bold;"></p> 
+
+    <table cellpadding="10">
+        <tr>
+            <td>Name</td>
+            <td><input type="text" id="studentname"></td>
+        </tr>
+
+        <tr>
+            <td>Age</td>
+            <td><input type="number" id="studentage"></td>
+        </tr>
+
+        <tr>
+            <td>Gender</td>
+            <td>
+                <input type="radio" name="gender" value="Male"> Male
+                <input type="radio" name="gender" value="Female"> Female
+            </td>
+        </tr>
+
+        <tr>
+            <td>Course</td>
+            <td>
+                <select id="course">
+                    <option>JavaScript</option>
+                    <option>Python</option>
+                    <option>Java</option>
+                </select>
+            </td>
+        </tr>
+
+        <tr>
+            <td>Email</td>
+            <td>
+               <input type="email"
+                    id="studentemail"
+                    onkeyup="validateForm()">
+               <p id="emailError" style="color:red;margin:0;"></p>
+            </td>
+        </tr>
+
+        <tr>
+            <td>Password</td>
+            <td>
+                <input type="password"
+                       id="password"
+                       onkeyup="validateForm()">
+                <p id="passwordError"></p>
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="2">
+                <button id="submitBtn"
+                        onclick="saveStudent()"
+                        disabled>
+                    Save
+                </button>
+            </td>
+        </tr>
+    </table>
+
+    <table width="80%" id="studentTable">
+        <tr>
+            <th>Name</th>
+            <th>Age</th>
+            <th>Course</th>
+            <th>Gender</th>
+            <th>Email</th>
+            <th>Action</th>
+        </tr>
+    </table>
+
+    <script>
+
+        function validateForm(){
+
+    let password =
+        document.getElementById("password").value;
+
+    let email =
+        document.getElementById("studentemail").value;
+
+    let passwordError =
+        document.getElementById("passwordError");
+
+    let emailError =
+        document.getElementById("emailError");
+
+    let submitBtn =
+        document.getElementById("submitBtn");
+
+    let emailPattern =
+        /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    let valid = true;
+
+    // Password Validation
+    if(password.length < 6){
+        passwordError.innerHTML =
+        "Password must be at least 6 characters";
+        valid = false;
+    }
+    else{
+        passwordError.innerHTML = "";
+    }
+
+    // Email Validation
+    if(!emailPattern.test(email)){
+        emailError.innerHTML =
+        "Enter a valid email address";
+        valid = false;
+    }
+    else{
+        emailError.innerHTML = "";
+    }
+
+    submitBtn.disabled = !valid;
+}
+
+        
+        function saveStudent(){
+
+            let name =
+                document.getElementById("studentname").value;
+
+            let age =
+                document.getElementById("studentage").value;
+
+            let course =
+                document.getElementById("course").value;
+
+            let email =
+                document.getElementById("studentemail").value;
+
+            let gender =
+                document.querySelector(
+                    'input[name="gender"]:checked'
+                );
+            let formError =
+            document.getElementById("formError");
+
+            if(name=="" || age=="" ||
+            email=="" || gender==null){
+                formError.innerHTML =
+                "Please fill all the fields";
+                return;
+            }
+            else{
+                formError.innerHTML = "";
+
+            }
+
+            let table =
+                document.getElementById("studentTable");
+
+            let row = table.insertRow(-1);
+
+            row.innerHTML = `
+                <td>${name}</td>
+                <td>${age}</td>
+                <td>${course}</td>
+                <td>${gender.value}</td>
+                <td>${email}</td>
+                <td>
+                    <button class="delete-btn"
+                    onclick="deleteRow(this)">
+                    Delete
+                    </button>
+                </td>
+            `;
+
+            document.getElementById("studentname").value = "";
+            document.getElementById("studentage").value = "";
+            document.getElementById("studentemail").value = "";
+            document.getElementById("password").value = "";
+            document.getElementById("course").selectedIndex = 0;
+
+            if(gender){
+                gender.checked = false;
+            }
+
+            document.getElementById("submitBtn").disabled = true;
+        }
+
+        function deleteRow(btn){
+            btn.parentElement.parentElement.remove();
+        }
+
+    </script>
+
+</body>
+</html>
+
